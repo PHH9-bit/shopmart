@@ -91,27 +91,30 @@ export default function PromoSlider() {
 
   return (
     <div className="relative w-full overflow-hidden rounded-none md:rounded-xl mx-0 my-0 md:my-4">
-      {/* ارتفاع ریسپانسیو برای موبایل و تبلت و دسکتاپ */}
-      <div className="relative h-[280px] sm:h-[320px] md:h-[400px] lg:h-[450px] w-full">
+      {/* ارتفاع مناسب برای موبایل و دسکتاپ */}
+      <div className="relative h-[250px] sm:h-[300px] md:h-[400px] lg:h-[450px] w-full">
         
-        {/* تصویر با قابلیت Object Cover که در همه دستگاه‌ها عالی باشه */}
+        {/* تصویر - در موبایل contain باشه تا کل عکس دیده بشه */}
         {currentSlide.image ? (
-          <Image
-            src={currentSlide.image}
-            alt={currentSlide.title}
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 100vw"
-            priority={currentIndex === 0}
-          />
+          <div className="absolute inset-0">
+            <Image
+              src={currentSlide.image}
+              alt={currentSlide.title}
+              fill
+              className="object-contain md:object-cover"
+              sizes="100vw"
+              priority={currentIndex === 0}
+              style={{ objectPosition: 'center' }}
+            />
+          </div>
         ) : (
           <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-900" />
         )}
 
-        {/* لایه نیمه شفاف برای خوانایی متن - در موبایل کمی پررنگ‌تر */}
-        <div className="absolute inset-0 bg-black/40 md:bg-black/30" />
+        {/* لایه نیمه شفاف برای خوانایی متن - در موبایل کمتر */}
+        <div className="absolute inset-0 bg-black/20 md:bg-black/30" />
 
-        {/* Container محتوا با پدینگ مخصوص موبایل */}
+        {/* محتوا */}
         <div className="relative z-10 container-custom h-full flex items-center px-4 sm:px-6 md:px-8">
           <motion.div
             key={currentIndex}
@@ -120,7 +123,6 @@ export default function PromoSlider() {
             transition={{ duration: 0.5 }}
             className="max-w-full md:max-w-2xl text-white"
           >
-            {/* ساب‌تایتل - سایز فونت در موبایل کوچک‌تر */}
             <motion.span
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -130,34 +132,31 @@ export default function PromoSlider() {
               {currentSlide.subtitle}
             </motion.span>
             
-            {/* تایتل - فونت در موبایل کوچک‌تر و جمع‌وجورتر */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3 leading-tight"
+              className="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3 leading-tight"
             >
               {currentSlide.title}
             </motion.h1>
             
-            {/* توضیحات - در موبایل کوتاه‌تر و فونت ریزتر */}
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-xs sm:text-sm md:text-base mb-4 md:mb-6 text-white/90 max-w-lg line-clamp-2 sm:line-clamp-3"
+              className="text-xs sm:text-sm md:text-base mb-3 md:mb-6 text-white/80 md:text-white/90 max-w-lg line-clamp-2 sm:line-clamp-3"
             >
               {currentSlide.description}
             </motion.p>
             
-            {/* دکمه - سایز مناسب برای موبایل */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
               <Link href={currentSlide.buttonLink}>
-                <button className="px-4 py-2 md:px-5 md:py-2.5 bg-white text-gray-900 rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 text-xs sm:text-sm md:text-base">
+                <button className="px-3 py-1.5 md:px-5 md:py-2.5 bg-white text-gray-900 rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 text-xs sm:text-sm md:text-base">
                   {currentSlide.buttonText}
                 </button>
               </Link>
@@ -166,10 +165,10 @@ export default function PromoSlider() {
         </div>
       </div>
 
-      {/* دکمه‌های ناوبری - در موبایل کوچک‌تر و نزدیک‌تر به لبه */}
+      {/* دکمه‌های ناوبری */}
       <button
         onClick={prevSlide}
-        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all duration-300 backdrop-blur-sm z-20"
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-all duration-300 backdrop-blur-sm z-20"
         aria-label="اسلاید قبلی"
       >
         <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
@@ -177,13 +176,13 @@ export default function PromoSlider() {
       
       <button
         onClick={nextSlide}
-        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 rounded-full bg-black/40 hover:bg-black/60 text-white transition-all duration-300 backdrop-blur-sm z-20"
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-all duration-300 backdrop-blur-sm z-20"
         aria-label="اسلاید بعدی"
       >
         <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
       </button>
 
-      {/* نقطه‌های پایین اسلایدر - در موبایل کوچک‌تر */}
+      {/* نقطه‌ها */}
       <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2 z-20">
         {slides.map((_, index) => (
           <button
