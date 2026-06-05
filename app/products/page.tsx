@@ -53,7 +53,6 @@ export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const { addItem } = useCart();
 
-  // ===== خواندن category از URL =====
   useEffect(() => {
     const categoryParam = searchParams.get('category');
     if (categoryParam === 'jewelery') setSelectedCategory('jewelery');
@@ -144,8 +143,71 @@ export default function ProductsPage() {
         <p className="text-muted-foreground mt-1">{filteredProducts.length} محصول یافت شد</p>
       </div>
 
+      {/* ===== بخش مهم: Toolbar ریسپانسیو برای موبایل ===== */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+        {/* ابزارهای سمت چپ (مرتب‌سازی و فیلتر) - در موبایل به صورت خطی زیر هم قرار می‌گیرن */}
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          {/* دکمه فیلتر برای موبایل */}
+          <button
+            onClick={() => setShowFilters(true)}
+            className="lg:hidden flex items-center gap-1.5 px-3 py-2 rounded-lg bg-secondary text-sm"
+          >
+            <Filter className="w-4 h-4" />
+            فیلتر
+          </button>
+
+          {/* جستجو - در موبایل full width */}
+          <div className="relative flex-1 sm:flex-initial">
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="جستجو..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full sm:w-64 px-4 py-2 pr-10 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          {/* مرتب‌سازی */}
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-3 py-2 rounded-lg border border-border bg-background text-sm"
+          >
+            {SORT_OPTIONS.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+
+          {/* تغییر حالت نمایش (grid/list) */}
+          <div className="flex bg-secondary rounded-lg p-1">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-lg transition ${viewMode === 'grid' ? 'bg-primary text-primary-foreground' : ''}`}
+            >
+              <Grid3x3 className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-lg transition ${viewMode === 'list' ? 'bg-primary text-primary-foreground' : ''}`}
+            >
+              <List className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* دکمه فیلتر دسکتاپ (در سمت راست) */}
+        <button
+          onClick={() => setShowFilters(true)}
+          className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-sm"
+        >
+          <Filter className="w-4 h-4" />
+          فیلتر پیشرفته
+        </button>
+      </div>
+
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar */}
+        {/* Sidebar (دسکتاپ) */}
         <aside className="hidden lg:block w-64 shrink-0">
           <div className="sticky top-24 space-y-6">
             <div className="bg-card rounded-xl border border-border p-4">
@@ -213,54 +275,6 @@ export default function ProductsPage() {
 
         {/* Products */}
         <div className="flex-1">
-          <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-            <div className="flex items-center gap-3">
-              <div className="flex bg-secondary rounded-lg p-1">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg transition ${viewMode === 'grid' ? 'bg-primary text-primary-foreground' : ''}`}
-                >
-                  <Grid3x3 className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-lg transition ${viewMode === 'list' ? 'bg-primary text-primary-foreground' : ''}`}
-                >
-                  <List className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="relative">
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="جستجو..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pr-9 px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary w-40 md:w-60"
-                />
-              </div>
-
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                {SORT_OPTIONS.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-
-              <button
-                onClick={() => setShowFilters(true)}
-                className="lg:hidden flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary text-sm"
-              >
-                <Filter className="w-4 h-4" />
-                فیلتر
-              </button>
-            </div>
-          </div>
-
           {filteredProducts.length === 0 ? (
             <div className="text-center py-20">
               <div className="text-6xl mb-4">🔍</div>
@@ -269,7 +283,7 @@ export default function ProductsPage() {
             </div>
           ) : (
             <div className={viewMode === 'grid' 
-              ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
+              ? 'grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'
               : 'space-y-4'
             }>
               <AnimatePresence>
@@ -288,19 +302,19 @@ export default function ProductsPage() {
                               src={product.image}
                               alt={product.title}
                               fill
-                              className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              className="object-contain p-3 sm:p-4 group-hover:scale-105 transition-transform duration-300"
+                              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
                             />
                           </div>
-                          <div className="p-4">
-                            <div className="text-xs text-muted-foreground mb-1">
+                          <div className="p-2 sm:p-4">
+                            <div className="text-[11px] sm:text-xs text-muted-foreground mb-0.5 sm:mb-1">
                               {translateCategory(product.category)}
                             </div>
-                            <h3 className="font-semibold line-clamp-2 text-sm mb-2 group-hover:text-primary transition">
+                            <h3 className="font-semibold line-clamp-2 text-xs sm:text-sm mb-1 sm:mb-2 group-hover:text-primary transition">
                               {product.title}
                             </h3>
                             <div className="flex justify-between items-center">
-                              <span className="text-sm font-bold text-primary">
+                              <span className="text-xs sm:text-sm font-bold text-primary">
                                 {formatPrice(product.price)}
                               </span>
                               <button
@@ -308,7 +322,7 @@ export default function ProductsPage() {
                                   e.preventDefault();
                                   addItem(product);
                                 }}
-                                className="px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-sm hover:bg-primary hover:text-white transition"
+                                className="px-2 sm:px-3 py-1 sm:py-1.5 bg-primary/10 text-primary rounded-lg text-[11px] sm:text-sm hover:bg-primary hover:text-white transition"
                               >
                                 خرید
                               </button>
@@ -317,22 +331,22 @@ export default function ProductsPage() {
                         </Link>
                       </div>
                     ) : (
-                      <div className="flex gap-4 p-4 bg-card rounded-xl border border-border hover:shadow-lg transition w-full">
-                        <Link href={`/products/${product.id}`} className="flex gap-4 flex-1">
-                          <div className="relative w-24 h-24 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                            <Image src={product.image} alt={product.title} fill className="object-contain p-2" />
+                      <div className="flex gap-3 sm:gap-4 p-3 sm:p-4 bg-card rounded-xl border border-border hover:shadow-lg transition w-full">
+                        <Link href={`/products/${product.id}`} className="flex gap-3 sm:gap-4 flex-1">
+                          <div className="relative w-16 h-16 sm:w-24 sm:h-24 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                            <Image src={product.image} alt={product.title} fill className="object-contain p-1 sm:p-2" />
                           </div>
-                          <div className="flex-1">
-                            <h3 className="font-semibold line-clamp-2">{product.title}</h3>
-                            <p className="text-sm text-muted-foreground line-clamp-1">{product.description}</p>
-                            <div className="flex items-center gap-4 mt-2">
-                              <span className="text-sm font-bold text-primary">{formatPrice(product.price)}</span>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-sm sm:text-base line-clamp-2">{product.title}</h3>
+                            <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 sm:mt-1">{product.description}</p>
+                            <div className="flex items-center gap-2 sm:gap-4 mt-1 sm:mt-2">
+                              <span className="text-xs sm:text-sm font-bold text-primary">{formatPrice(product.price)}</span>
                             </div>
                           </div>
                         </Link>
                         <button
                           onClick={() => addItem(product)}
-                          className="px-4 py-2 bg-primary text-white rounded-lg text-sm whitespace-nowrap"
+                          className="px-2 sm:px-4 py-1 sm:py-2 bg-primary text-white rounded-lg text-xs sm:text-sm whitespace-nowrap"
                         >
                           افزودن به سبد
                         </button>
@@ -346,7 +360,7 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      {/* Mobile Filter */}
+      {/* Mobile Filter Modal */}
       <AnimatePresence>
         {showFilters && (
           <>
