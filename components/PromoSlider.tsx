@@ -11,7 +11,8 @@ interface Slide {
   title: string;
   subtitle: string;
   description: string;
-  image: string;
+  imageDesktop: string;
+  imageMobile: string;
   buttonText: string;
   buttonLink: string;
 }
@@ -22,7 +23,8 @@ const slides: Slide[] = [
     title: 'تخفیف ویژه تابستانه',
     subtitle: 'تا ۵۰٪ تخفیف',
     description: 'با کد SUMMER50 از تخفیف‌های ویژه بهره‌مند شوید',
-    image: '/images/promo/slide-1.png',
+    imageDesktop: '/images/promo/slide-1-desktop.png',
+    imageMobile: '/images/promo/slide-1-mobile.png',
     buttonText: 'مشاهده محصولات',
     buttonLink: '/products',
   },
@@ -31,7 +33,8 @@ const slides: Slide[] = [
     title: 'جشنواره پوشاک پاییزه',
     subtitle: 'جدیدترین مدل‌ها',
     description: 'خرید با تخفیف ۳۰٪ و ارسال رایگان',
-    image: '/images/promo/slide-2.png',
+    imageDesktop: '/images/promo/slide-2-desktop.png',
+    imageMobile: '/images/promo/slide-2-mobile.png',
     buttonText: 'خرید کنید',
     buttonLink: '/products?category=mens-clothing',
   },
@@ -40,7 +43,8 @@ const slides: Slide[] = [
     title: 'الکترونیک با کیفیت',
     subtitle: 'محصولات اورجینال',
     description: 'ضمانت اصالت کالا و ۷ روز بازگشت',
-    image: '/images/promo/slide-3.png',
+    imageDesktop: '/images/promo/slide-3-desktop.png',
+    imageMobile: '/images/promo/slide-3-mobile.png',
     buttonText: 'مشاهده محصولات',
     buttonLink: '/products?category=electronics',
   },
@@ -49,7 +53,8 @@ const slides: Slide[] = [
     title: 'جواهرات لوکس',
     subtitle: 'هدیه‌های خاص',
     description: 'طراحی اختصاصی و تحویل سریع',
-    image: '/images/promo/slide-4.png',
+    imageDesktop: '/images/promo/slide-4-desktop.png',
+    imageMobile: '/images/promo/slide-4-mobile.png',
     buttonText: 'مشاهده جواهرات',
     buttonLink: '/products?category=jewelery',
   },
@@ -58,6 +63,17 @@ const slides: Slide[] = [
 export default function PromoSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // تشخیص موبایل یا دسکتاپ
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     if (!isAutoPlaying) return;
@@ -88,17 +104,18 @@ export default function PromoSlider() {
   };
 
   const currentSlide = slides[currentIndex];
+  const currentImage = isMobile ? currentSlide.imageMobile : currentSlide.imageDesktop;
 
   return (
     <div className="relative w-full overflow-hidden rounded-none md:rounded-xl mx-0 my-0 md:my-4">
-      {/* ارتفاع مناسب برای موبایل و دسکتاپ */}
-      <div className="relative h-[250px] sm:h-[300px] md:h-[400px] lg:h-[450px] w-full">
+      {/* ارتفاع متفاوت برای موبایل و دسکتاپ */}
+      <div className="relative h-[400px] sm:h-[450px] md:h-[500px] lg:h-[550px] w-full">
         
-        {/* تصویر - در موبایل contain باشه تا کل عکس دیده بشه */}
-        {currentSlide.image ? (
+        {/* تصویر با سایز مناسب هر دستگاه */}
+        {currentImage ? (
           <div className="absolute inset-0">
             <Image
-              src={currentSlide.image}
+              src={currentImage}
               alt={currentSlide.title}
               fill
               className="object-contain md:object-cover"
@@ -111,23 +128,27 @@ export default function PromoSlider() {
           <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-900" />
         )}
 
-        {/* لایه نیمه شفاف برای خوانایی متن - در موبایل کمتر */}
+        {/* لایه نیمه شفاف - در موبایل کمتر برای نمایش بهتر عکس */}
         <div className="absolute inset-0 bg-black/20 md:bg-black/30" />
 
-        {/* محتوا */}
+        {/* محتوا - موقعیت متفاوت در موبایل */}
         <div className="relative z-10 container-custom h-full flex items-center px-4 sm:px-6 md:px-8">
           <motion.div
             key={currentIndex}
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-full md:max-w-2xl text-white"
+            className={`max-w-full md:max-w-2xl text-white ${
+              isMobile ? 'text-center w-full' : 'text-right'
+            }`}
           >
             <motion.span
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="inline-block px-3 py-1 md:px-4 md:py-1 bg-black/50 backdrop-blur-sm rounded-full text-xs md:text-sm mb-2 md:mb-4"
+              className={`inline-block px-3 py-1 md:px-4 bg-black/50 backdrop-blur-sm rounded-full text-xs md:text-sm mb-2 md:mb-4 ${
+                isMobile ? 'mx-auto' : ''
+              }`}
             >
               {currentSlide.subtitle}
             </motion.span>
@@ -136,7 +157,9 @@ export default function PromoSlider() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3 leading-tight"
+              className={`text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3 leading-tight ${
+                isMobile ? 'text-center' : ''
+              }`}
             >
               {currentSlide.title}
             </motion.h1>
@@ -145,7 +168,9 @@ export default function PromoSlider() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-xs sm:text-sm md:text-base mb-3 md:mb-6 text-white/80 md:text-white/90 max-w-lg line-clamp-2 sm:line-clamp-3"
+              className={`text-xs sm:text-sm md:text-base mb-3 md:mb-6 text-white/80 md:text-white/90 max-w-lg ${
+                isMobile ? 'mx-auto text-center' : ''
+              }`}
             >
               {currentSlide.description}
             </motion.p>
@@ -154,9 +179,12 @@ export default function PromoSlider() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
+              className={isMobile ? 'text-center' : ''}
             >
               <Link href={currentSlide.buttonLink}>
-                <button className="px-3 py-1.5 md:px-5 md:py-2.5 bg-white text-gray-900 rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 text-xs sm:text-sm md:text-base">
+                <button className={`px-4 py-2 md:px-6 md:py-3 bg-white text-gray-900 rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 text-sm md:text-base ${
+                  isMobile ? 'mx-auto' : ''
+                }`}>
                   {currentSlide.buttonText}
                 </button>
               </Link>
@@ -171,7 +199,7 @@ export default function PromoSlider() {
         className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-all duration-300 backdrop-blur-sm z-20"
         aria-label="اسلاید قبلی"
       >
-        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+        <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
       </button>
       
       <button
@@ -179,7 +207,7 @@ export default function PromoSlider() {
         className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-all duration-300 backdrop-blur-sm z-20"
         aria-label="اسلاید بعدی"
       >
-        <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+        <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
       </button>
 
       {/* نقطه‌ها */}
@@ -190,8 +218,8 @@ export default function PromoSlider() {
             onClick={() => goToSlide(index)}
             className={`transition-all duration-300 ${
               currentIndex === index
-                ? 'w-4 sm:w-6 h-1 sm:h-1.5 bg-white rounded-full'
-                : 'w-1.5 sm:w-1.5 h-1 sm:h-1.5 bg-white/50 rounded-full hover:bg-white/80'
+                ? 'w-5 sm:w-7 h-1 sm:h-1.5 bg-white rounded-full'
+                : 'w-1.5 sm:w-2 h-1 sm:h-1.5 bg-white/50 rounded-full hover:bg-white/80'
             }`}
             aria-label={`رفتن به اسلاید ${index + 1}`}
           />
