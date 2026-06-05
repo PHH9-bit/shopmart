@@ -47,19 +47,19 @@ export default function CartPage() {
 
   if (items.length === 0 && savedItems.length === 0) {
     return (
-      <div className="container-custom py-20">
+      <div className="container-custom py-12 sm:py-20">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md mx-auto text-center"
+          className="max-w-md mx-auto text-center px-4"
         >
-          <div className="text-8xl mb-6">🛒</div>
-          <h2 className="text-3xl font-bold mb-4">سبد خرید شما خالی است</h2>
-          <p className="text-muted-foreground mb-8">
+          <div className="text-6xl sm:text-8xl mb-4 sm:mb-6">🛒</div>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">سبد خرید شما خالی است</h2>
+          <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8">
             محصولات مورد علاقه خود را به سبد خرید اضافه کنید
           </p>
           <Link href="/products">
-            <button className="inline-flex items-center gap-2 bg-primary text-white px-8 py-3 rounded-full font-semibold hover:bg-primary/90 transition">
+            <button className="inline-flex items-center gap-2 bg-primary text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold hover:bg-primary/90 transition text-sm sm:text-base">
               شروع خرید <ArrowRight className="w-4 h-4" />
             </button>
           </Link>
@@ -69,14 +69,15 @@ export default function CartPage() {
   }
 
   return (
-    <div className="container-custom py-8">
-      <div className="flex flex-col lg:flex-row gap-8">
+    <div className="container-custom py-4 sm:py-8 px-3 sm:px-4">
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
         {/* Cart Items Section */}
         <div className="flex-1">
-          <div className="flex justify-between items-center mb-6">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 sm:mb-6">
             <div>
-              <h1 className="text-3xl font-bold">سبد خرید</h1>
-              <p className="text-muted-foreground mt-1">{totalItems} کالا</p>
+              <h1 className="text-2xl sm:text-3xl font-bold">سبد خرید</h1>
+              <p className="text-sm text-muted-foreground mt-1">{totalItems} کالا</p>
             </div>
             <button
               onClick={() => {
@@ -89,7 +90,8 @@ export default function CartPage() {
             </button>
           </div>
 
-          <div className="space-y-4">
+          {/* Cart Items */}
+          <div className="space-y-3 sm:space-y-4">
             <AnimatePresence>
               {items.map((item, index) => (
                 <motion.div
@@ -98,9 +100,10 @@ export default function CartPage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ delay: index * 0.05 }}
-                  className="flex flex-col sm:flex-row gap-4 p-4 bg-card rounded-xl border border-border hover:shadow-lg transition-all"
+                  className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-3 sm:p-4 bg-card rounded-xl border border-border hover:shadow-lg transition-all"
                 >
-                  <Link href={`/products/${item.id}`} className="relative w-24 h-24 bg-gray-50 dark:bg-gray-800/50 rounded-lg overflow-hidden flex-shrink-0 self-center sm:self-auto">
+                  {/* Product Image */}
+                  <Link href={`/products/${item.id}`} className="relative w-20 h-20 sm:w-24 sm:h-24 bg-gray-50 dark:bg-gray-800/50 rounded-lg overflow-hidden flex-shrink-0 self-center sm:self-auto">
                     <Image
                       src={item.image}
                       alt={item.title}
@@ -109,20 +112,21 @@ export default function CartPage() {
                     />
                   </Link>
                   
-                  <div className="flex-1">
+                  {/* Product Info */}
+                  <div className="flex-1 min-w-0">
                     <Link href={`/products/${item.id}`}>
-                      <h3 className="font-semibold line-clamp-2 hover:text-primary transition">
+                      <h3 className="font-semibold text-sm sm:text-base line-clamp-2 hover:text-primary transition">
                         {item.title}
                       </h3>
                     </Link>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {item.category === "men's clothing" ? "پوشاک مردانه" :
                        item.category === "women's clothing" ? "پوشاک زنانه" :
                        item.category === "jewelery" ? "جواهرات" :
                        item.category === "electronics" ? "الکترونیک" : item.category}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-primary font-bold">{formatPrice(item.price)}</span>
+                      <span className="text-primary font-bold text-sm sm:text-base">{formatPrice(item.price)}</span>
                       {item.price > 1800000 && (
                         <span className="text-xs text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full">
                           ارسال رایگان
@@ -130,28 +134,29 @@ export default function CartPage() {
                       )}
                     </div>
                     
-                    <div className="flex items-center gap-4 mt-3">
-                      <div className="flex items-center gap-2 border border-border rounded-lg">
+                    {/* Actions */}
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-3">
+                      <div className="flex items-center gap-1 sm:gap-2 border border-border rounded-lg">
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="p-2 hover:bg-secondary transition-colors"
+                          className="p-1.5 sm:p-2 hover:bg-secondary transition-colors"
                         >
-                          <Minus className="w-4 h-4" />
+                          <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
                         </button>
-                        <span className="w-10 text-center font-medium">{item.quantity}</span>
+                        <span className="w-8 sm:w-10 text-center text-sm sm:text-base font-medium">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="p-2 hover:bg-secondary transition-colors"
+                          className="p-1.5 sm:p-2 hover:bg-secondary transition-colors"
                         >
-                          <Plus className="w-4 h-4" />
+                          <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                         </button>
                       </div>
                       
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="text-destructive hover:bg-destructive/10 p-2 rounded-lg transition-colors"
+                        className="text-destructive hover:bg-destructive/10 p-1.5 sm:p-2 rounded-lg transition-colors"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </button>
 
                       <button
@@ -160,15 +165,16 @@ export default function CartPage() {
                           removeItem(item.id);
                           toast.success('محصول به لیست بعدی اضافه شد');
                         }}
-                        className="text-muted-foreground hover:text-primary text-sm"
+                        className="text-xs sm:text-sm text-muted-foreground hover:text-primary"
                       >
                         خرید بعد
                       </button>
                     </div>
                   </div>
                   
-                  <div className="text-right sm:text-left">
-                    <p className="font-bold text-lg">{formatPrice(item.price * item.quantity)}</p>
+                  {/* Price Total */}
+                  <div className="text-right sm:text-left mt-2 sm:mt-0">
+                    <p className="font-bold text-base sm:text-lg">{formatPrice(item.price * item.quantity)}</p>
                     {item.quantity > 1 && (
                       <p className="text-xs text-muted-foreground">
                         {formatPrice(item.price)} × {item.quantity}
@@ -180,35 +186,38 @@ export default function CartPage() {
             </AnimatePresence>
           </div>
 
+          {/* Saved for Later */}
           {savedItems.length > 0 && (
-            <div className="mt-8">
-              <h3 className="font-bold text-lg mb-4">خرید بعد ({savedItems.length})</h3>
-              <div className="space-y-3">
+            <div className="mt-6 sm:mt-8">
+              <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">خرید بعد ({savedItems.length})</h3>
+              <div className="space-y-2 sm:space-y-3">
                 {savedItems.map((item) => (
-                  <div key={`saved-${item.id}`} className="flex items-center gap-4 p-3 bg-secondary/30 rounded-lg">
-                    <div className="relative w-12 h-12 bg-background rounded">
+                  <div key={`saved-${item.id}`} className="flex flex-wrap sm:flex-nowrap items-center gap-3 p-3 bg-secondary/30 rounded-lg">
+                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-background rounded flex-shrink-0">
                       <Image src={item.image} alt={item.title} fill className="object-contain p-1" />
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium line-clamp-1">{item.title}</p>
-                      <p className="text-xs text-primary">{formatPrice(item.price)}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm font-medium line-clamp-1">{item.title}</p>
+                      <p className="text-xs text-primary mt-0.5">{formatPrice(item.price)}</p>
                     </div>
-                    <button
-                      onClick={() => {
-                        updateQuantity(item.id, 1);
-                        setSavedItems(savedItems.filter(i => i.id !== item.id));
-                        toast.success('محصول به سبد خرید اضافه شد');
-                      }}
-                      className="text-xs text-primary hover:underline"
-                    >
-                      افزودن به سبد
-                    </button>
-                    <button
-                      onClick={() => setSavedItems(savedItems.filter(i => i.id !== item.id))}
-                      className="text-destructive"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          updateQuantity(item.id, 1);
+                          setSavedItems(savedItems.filter(i => i.id !== item.id));
+                          toast.success('محصول به سبد خرید اضافه شد');
+                        }}
+                        className="text-xs text-primary hover:underline whitespace-nowrap"
+                      >
+                        افزودن به سبد
+                      </button>
+                      <button
+                        onClick={() => setSavedItems(savedItems.filter(i => i.id !== item.id))}
+                        className="text-destructive"
+                      >
+                        <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -216,18 +225,19 @@ export default function CartPage() {
           )}
         </div>
 
-        {/* Order Summary */}
+        {/* Order Summary - Sidebar */}
         <div className="lg:w-96">
-          <div className="sticky top-24 space-y-4">
+          <div className="sticky top-24 space-y-3 sm:space-y-4">
+            {/* Free Shipping Progress */}
             {subtotal < 1800000 && (
-              <div className="bg-primary/10 rounded-xl p-4">
-                <div className="flex items-center gap-2 text-sm mb-2">
-                  <Truck className="w-4 h-4 text-primary" />
+              <div className="bg-primary/10 rounded-xl p-3 sm:p-4">
+                <div className="flex items-center gap-2 text-xs sm:text-sm mb-2">
+                  <Truck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
                   <span>
                     {formatPrice(1800000 - subtotal)} دیگر تا ارسال رایگان
                   </span>
                 </div>
-                <div className="h-2 bg-primary/20 rounded-full overflow-hidden">
+                <div className="h-1.5 sm:h-2 bg-primary/20 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${(subtotal / 1800000) * 100}%` }}
@@ -237,10 +247,11 @@ export default function CartPage() {
               </div>
             )}
 
-            <div className="bg-card rounded-xl border border-border p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Tag className="w-4 h-4 text-primary" />
-                <span className="font-semibold">کد تخفیف</span>
+            {/* Promo Code */}
+            <div className="bg-card rounded-xl border border-border p-3 sm:p-4">
+              <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
+                <span className="font-semibold text-sm sm:text-base">کد تخفیف</span>
               </div>
               <div className="flex gap-2">
                 <input
@@ -248,12 +259,12 @@ export default function CartPage() {
                   placeholder="SAVE10 یا WELCOME"
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
-                  className="flex-1 px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-border bg-background text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
                 <button
                   onClick={handleApplyPromo}
                   disabled={isApplying || !promoCode}
-                  className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold disabled:opacity-50"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 bg-primary text-white rounded-lg text-xs sm:text-sm font-semibold disabled:opacity-50"
                 >
                   {isApplying ? '...' : 'اعمال'}
                 </button>
@@ -265,30 +276,31 @@ export default function CartPage() {
               )}
             </div>
 
-            <div className="bg-card rounded-xl border border-border p-6">
-              <h2 className="text-xl font-bold mb-4">خلاصه سفارش</h2>
+            {/* Order Summary */}
+            <div className="bg-card rounded-xl border border-border p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">خلاصه سفارش</h2>
               
-              <div className="space-y-3 mb-6">
-                <div className="flex justify-between">
+              <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+                <div className="flex justify-between text-sm sm:text-base">
                   <span className="text-muted-foreground">مجموع قیمت ({totalItems} کالا)</span>
                   <span>{formatPrice(subtotal)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-sm sm:text-base">
                   <span className="text-muted-foreground">هزینه ارسال</span>
                   <span>{shipping === 0 ? 'رایگان' : formatPrice(shipping)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-sm sm:text-base">
                   <span className="text-muted-foreground">مالیات (۹%)</span>
                   <span>{formatPrice(tax)}</span>
                 </div>
                 {discount > 0 && (
-                  <div className="flex justify-between text-green-500">
+                  <div className="flex justify-between text-sm sm:text-base text-green-500">
                     <span>تخفیف</span>
                     <span>-{formatPrice(discount)}</span>
                   </div>
                 )}
-                <div className="border-t border-border pt-3 mt-3">
-                  <div className="flex justify-between font-bold text-lg">
+                <div className="border-t border-border pt-2 sm:pt-3 mt-2 sm:mt-3">
+                  <div className="flex justify-between font-bold text-base sm:text-lg">
                     <span>قابل پرداخت</span>
                     <span className="text-primary">{formatPrice(finalTotal)}</span>
                   </div>
@@ -296,13 +308,13 @@ export default function CartPage() {
               </div>
 
               <Link href="/checkout">
-                <button className="w-full bg-gradient-to-r from-primary to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                <button className="w-full bg-gradient-to-r from-primary to-purple-600 text-white py-2.5 sm:py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
                   <CreditCard className="w-4 h-4" />
                   ادامه فرآیند خرید
                 </button>
               </Link>
 
-              <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+              <div className="mt-3 sm:mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
                 <Shield className="w-3 h-3" />
                 <span>پرداخت امن و تضمین شده</span>
               </div>
