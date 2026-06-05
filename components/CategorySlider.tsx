@@ -52,7 +52,7 @@ export default function CategorySlider() {
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      if (width < 640) setItemsPerView(1.2); // تغییر: نمایش بخشی از کارت بعدی
+      if (width < 640) setItemsPerView(1);
       else if (width < 768) setItemsPerView(2);
       else if (width < 1024) setItemsPerView(3);
       else setItemsPerView(4);
@@ -62,22 +62,25 @@ export default function CategorySlider() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // محاسبه حداکثر ایندکس بر اساس تعداد کل و تعداد آیتم در هر ویو
-  const maxIndex = Math.max(0, Math.ceil(categories.length - itemsPerView));
+  // محاسبه درست ایندکس آخر: تعداد کل دسته‌ها منهای تعداد آیتم در هر ویو
+  const maxIndex = Math.max(0, categories.length - itemsPerView);
   
   const nextSlide = () => {
-    setCurrentIndex(prev => Math.min(prev + 1, maxIndex));
+    if (currentIndex < maxIndex) {
+      setCurrentIndex(prev => prev + 1);
+    }
   };
   
   const prevSlide = () => {
-    setCurrentIndex(prev => Math.max(prev - 1, 0));
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+    }
   };
 
   const handleImageError = (categoryId: string) => {
     setImageErrors(prev => ({ ...prev, [categoryId]: true }));
   };
 
-  // محاسبه عرض هر آیتم بر حسب درصد
   const itemWidth = 100 / itemsPerView;
 
   return (
@@ -92,14 +95,22 @@ export default function CategorySlider() {
           <button
             onClick={prevSlide}
             disabled={currentIndex === 0}
-            className="p-1.5 sm:p-2 rounded-full bg-secondary hover:bg-primary hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`p-1.5 sm:p-2 rounded-full transition-all duration-300 ${
+              currentIndex === 0 
+                ? 'bg-secondary/50 text-muted-foreground cursor-not-allowed' 
+                : 'bg-secondary hover:bg-primary hover:text-white'
+            }`}
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
           <button
             onClick={nextSlide}
             disabled={currentIndex >= maxIndex}
-            className="p-1.5 sm:p-2 rounded-full bg-secondary hover:bg-primary hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`p-1.5 sm:p-2 rounded-full transition-all duration-300 ${
+              currentIndex >= maxIndex 
+                ? 'bg-secondary/50 text-muted-foreground cursor-not-allowed' 
+                : 'bg-secondary hover:bg-primary hover:text-white'
+            }`}
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -131,7 +142,6 @@ export default function CategorySlider() {
               >
                 <Link href={category.link}>
                   <div className="group cursor-pointer">
-                    {/* Image Container */}
                     <div className="relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-900/50">
                       <motion.div
                         className="relative w-full h-full"
@@ -154,7 +164,6 @@ export default function CategorySlider() {
                         />
                       </motion.div>
 
-                      {/* Product Count Badge */}
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{
@@ -168,7 +177,6 @@ export default function CategorySlider() {
                       </motion.div>
                     </div>
 
-                    {/* Category Name */}
                     <motion.div
                       className="text-center mt-2 sm:mt-4"
                       animate={{
